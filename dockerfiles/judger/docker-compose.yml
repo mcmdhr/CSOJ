@@ -1,0 +1,9 @@
+judger:
+    image: csoj/judger
+    volumes:
+        - /home/OnlineJudge:/var/judger/code
+        - /home/test_case:/var/judger/test_case
+        - /home/log:/judger/code/judge/log
+    environment:
+        - rpc_token=SicnuOJ
+        - "0.0.0.0:8085:8080"
