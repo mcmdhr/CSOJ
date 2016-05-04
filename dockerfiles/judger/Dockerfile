@@ -13,7 +13,7 @@ RUN echo debconf shared/accepted-oracle-license-v1-1 select true | sudo debconf-
 RUN echo debconf shared/accepted-oracle-license-v1-1 seen true | sudo debconf-set-selections
 RUN apt-get update
 RUN apt-get install -y oracle-java7-installer
-RUN git clone https://github.com/QingdaoU/Judger
+RUN git clone https://github.com/mcmdhr/Judger.git
 RUN cd Judger && python setup.py install
 RUN mkdir -p /var/judger/run/ && mkdir /var/judger/test_case/ && mkdir /var/judger/code/
 RUN chmod -R 777 /var/judger/run/
