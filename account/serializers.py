@@ -5,7 +5,6 @@
 # Filename     : serializers.py
 # Description :
 #=============================================================================
-# codeing=utf-8
 # coding=utf-8
 from rest_framework import serializers
 

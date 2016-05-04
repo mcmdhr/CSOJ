@@ -5,11 +5,12 @@
 # Filename     : models.py
 # Description :
 #=============================================================================
-# codeing = utf-8
+# coding=utf-8
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser
 
 from jsonfield import JSONField
+
 
 class UserManager(models.Manager):
     use_in_migrations = True
@@ -17,35 +18,37 @@ class UserManager(models.Manager):
     def get_by_natural_key(self, username):
         return self.get(**{self.model.USERNAME_FIELD: username})
 
+
 REGULAR_USER = 0
 ADMIN = 1
 SUPER_ADMIN = 2
 
+
 class User(AbstractBaseUser):
-    # username
+    # 用户名
     username = models.CharField(max_length=30, unique=True)
-    # realname
+    # 真实姓名
     real_name = models.CharField(max_length=30, blank=True, null=True)
-    # email
+    # 用户邮箱
     email = models.EmailField(max_length=254, blank=True, null=True)
-    # user's register time
+    # 用户注册时间
     create_time = models.DateTimeField(auto_now_add=True, null=True)
-    # 0=not admin 1=admin 2=super
-    admin_type = models.InergerField(default=0)
-    # 1=ac 2=testing
-    problem_status = JSONField(default={})
-    # token of reset password
+    # 0代表不是管理员 1是普通管理员 2是超级管理员
+    admin_type = models.IntegerField(default=0)
+    # JSON字典用来表示该用户的问题的解决状态 1为ac，2为正在进行
+    problems_status = JSONField(default={})
+    # 找回密码用的token
     reset_password_token = models.CharField(max_length=40, blank=True, null=True)
-    # create time of token
+    # token 生成时间
     reset_password_token_create_time = models.DateTimeField(blank=True, null=True)
-    # SSO auth token
+    # SSO授权token
     auth_token = models.CharField(max_length=40, blank=True, null=True)
-    # open auth?
+    # 是否开启两步验证
     two_factor_auth = models.BooleanField(default=False)
     tfa_token = models.CharField(max_length=40, blank=True, null=True)
     # open api key
     openapi_appkey = models.CharField(max_length=35, blank=True, null=True)
-    # forbidden user
+    # 是否禁用用户
     is_forbidden = models.BooleanField(default=False)
 
     USERNAME_FIELD = 'username'
@@ -56,9 +59,11 @@ class User(AbstractBaseUser):
     class Meta:
         db_table = "user"
 
+
 def _random_avatar():
     import random
     return "/static/img/avatar/avatar-" + str(random.randint(1, 20)) + ".png"
+
 
 class UserProfile(models.Model):
     user = models.OneToOneField(User)
@@ -71,6 +76,7 @@ class UserProfile(models.Model):
     rank = models.IntegerField(default=65535)
     accepted_number = models.IntegerField(default=0)
     submissions_number = models.IntegerField(default=0)
+    # JSON字典用来表示该用户的问题的解决状态 1为ac，2为正在进行
     problems_status = JSONField(default={})
     phone_number = models.CharField(max_length=15, blank=True, null=True)
     school = models.CharField(max_length=200, blank=True, null=True)

@@ -5,5 +5,6 @@
 # Filename     : models.py
 # Description :
 #=============================================================================
-
 from django.db import models
+
+# Create your models here.

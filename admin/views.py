@@ -5,12 +5,12 @@
 # Filename     : views.py
 # Description :
 #=============================================================================
-
-#coding=utf-8
+# coding=utf-8
 from django.conf import settings
 from django.http import HttpResponse, Http404
 
 from rest_framework.views import APIView
+
 
 class AdminTemplateView(APIView):
     def get(self, request, template_dir, template_name):
