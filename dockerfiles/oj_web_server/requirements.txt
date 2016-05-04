@@ -2,10 +2,11 @@ django
 MySQL-python
 redis
 django-redis-sessions
+djangorestframework
 django-rest-swagger
 gunicorn
 coverage
-django-extenstions
+django-extensions
 supervisor
 pillow
 jsonfield

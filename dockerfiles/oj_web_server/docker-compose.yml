@@ -7,7 +7,7 @@ mysql:
     volumes:
         - /home/data/mysql:/var/lib/mysql
     environment:
-        - MYSQL_ROOT_PASSWORD=SicnuOJ
+        - MYSQL_ROOT_PASSWORD={YOUR_PASSWORD}
 oj_web_server:
     image: csoj/oj_web_server
     volumes:
