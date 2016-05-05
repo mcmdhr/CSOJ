@@ -1,3 +1,5 @@
+# coding=utf-8
+
 #=============================================================================
 # Author       : MaxMao
 # Email        : 623742750@qq.com
@@ -5,7 +7,7 @@
 # Filename     : logger.py
 # Description :
 #=============================================================================
-# coding=utf-8
+
 import logging
 
 logging.basicConfig(level=logging.DEBUG,

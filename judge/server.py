@@ -1,3 +1,5 @@
+# coding=utf-8
+
 #=============================================================================
 # Author       : MaxMao
 # Email        : 623742750@qq.com
@@ -5,7 +7,7 @@
 # Filename     : server.py
 # Description :
 #=============================================================================
-# coding=utf-8
+
 import SocketServer
 from SimpleXMLRPCServer import SimpleXMLRPCServer, SimpleXMLRPCRequestHandler
 from runner import JudgeInstanceRunner
