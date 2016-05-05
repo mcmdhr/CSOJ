@@ -1,5 +1,5 @@
 require(["jquery", "avalon", "editor", "uploader", "bsAlert",
-        "csrfToken", "tagEditor", "validator", "editorComponent", "testCaseUploader"],
+        "csrfToken", "tagEditor", "validator", "editorComponent", "testCaseUploader", "spj"],
     function ($, avalon, editor, uploader, bsAlert, csrfTokenHeader) {
 
         avalon.ready(function () {
@@ -16,8 +16,12 @@ require(["jquery", "avalon", "editor", "uploader", "bsAlert",
                             bsAlert("题目描述不能为空!");
                             return false;
                         }
-                        if (vm.timeLimit < 30 || vm.timeLimit > 5000) {
-                            bsAlert("保证时间限制是一个30-5000的合法整数");
+                        if (vm.timeLimit < 1 || vm.timeLimit > 10000) {
+                            bsAlert("保证时间限制是一个1-10000的整数");
+                            return false;
+                        }
+                        if (vm.memoryLimit < 16) {
+                            bsAlert("最低内存不能低于16M(注意:Java最低需要内存32M)");
                             return false;
                         }
                         if (vm.samples.length == 0) {
@@ -29,6 +33,11 @@ require(["jquery", "avalon", "editor", "uploader", "bsAlert",
                                 bsAlert("样例输入与样例输出不能为空！");
                                 return false;
                             }
+                        }
+                        var spjVM = avalon.vmodels.spjConfig;
+                        if (spjVM.spj && !spjVM.spjCode){
+                            bsAlert("请填写Special Judge的代码");
+                            return false;
                         }
                         var ajaxData = {
                             title: vm.title,
@@ -42,8 +51,13 @@ require(["jquery", "avalon", "editor", "uploader", "bsAlert",
                             contest_id: avalon.vmodels.admin.contestId,
                             input_description: vm.inputDescription,
                             output_description: vm.outputDescription,
-                            sort_index: vm.sortIndex
+                            sort_index: vm.sortIndex,
+                            spj: spjVM.spj
                         };
+                        if (spjVM.spj) {
+                            ajaxData.spj_language = spjVM.spjLanguage;
+                            ajaxData.spj_code = spjVM.spjCode;
+                        }
 
                         if (avalon.vmodels.admin.contestProblemStatus == "edit") {
                             var method = "put";
@@ -91,7 +105,7 @@ require(["jquery", "avalon", "editor", "uploader", "bsAlert",
                     description: "",
                     timeLimit: 1000,
                     memoryLimit: 128,
-                    samples: [],
+                    samples: [{input: "", output: "", "visible": true}],
                     hint: "",
                     sortIndex: "",
                     visible: true,
@@ -181,6 +195,11 @@ require(["jquery", "avalon", "editor", "uploader", "bsAlert",
                                 })
                             }
                             avalon.vmodels.contestProblemHintEditor.content = problem.hint;
+                            var spjVM = avalon.vmodels.spjConfig;
+                            spjVM.spj = problem.spj;
+                            // spjLanguage可能是null
+                            spjVM.spjLanguage = problem.spj_language=="2"?"2":"1";
+                            spjVM.spjCode = problem.spj_code;
                         }
                     }
                 });

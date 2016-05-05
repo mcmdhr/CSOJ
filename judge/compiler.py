@@ -7,17 +7,15 @@
 # Filename     : compiler.py
 # Description :
 #=============================================================================
-
-import time
 import os
 import judger
-from judge_exceptions import CompileError, JudgeClientError
+from judge_exceptions import CompileError
 from logger import logger
-from settings import judger_workspace
 
 
-def compile_(language_item, src_path, exe_path, judge_base_path):
-    compile_command = language_item["compile_command"].format(src_path=src_path, exe_path=exe_path).split(" ")
+def compile_(language_item, src_path, exe_path, judge_base_path, compile_spj=False):
+    command_item = "spj_compile_command" if compile_spj else "compile_command"
+    compile_command = language_item[command_item].format(src_path=src_path, exe_path=exe_path).split(" ")
     compiler = compile_command[0]
     compile_args = compile_command[1:]
     compiler_output_file = os.path.join(judge_base_path, "compiler.out")
@@ -25,8 +23,8 @@ def compile_(language_item, src_path, exe_path, judge_base_path):
     compile_result = judger.run(path=compiler,
                                 in_file="/dev/null",
                                 out_file=compiler_output_file,
-                                max_cpu_time=2000,
-                                max_memory=2000000000,
+                                max_cpu_time=language_item["compile_max_cpu_time"],
+                                max_memory=language_item["compile_max_memory"],
                                 args=compile_args,
                                 env=["PATH=" + os.environ["PATH"]],
                                 use_sandbox=False,

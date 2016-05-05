@@ -7,7 +7,6 @@
 # Filename     : server.py
 # Description :
 #=============================================================================
-
 import SocketServer
 from SimpleXMLRPCServer import SimpleXMLRPCServer, SimpleXMLRPCRequestHandler
 from runner import JudgeInstanceRunner

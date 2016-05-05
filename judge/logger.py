@@ -7,7 +7,6 @@
 # Filename     : logger.py
 # Description :
 #=============================================================================
-
 import logging
 
 logging.basicConfig(level=logging.DEBUG,

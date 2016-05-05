@@ -28,7 +28,7 @@ from group.views import (GroupAdminAPIView, GroupMemberAdminAPIView,
 
 from admin.views import AdminTemplateView
 
-from problem.views import TestCaseUploadAPIView, ProblemTagAdminAPIView, ProblemAdminAPIView, OpenAPIProblemAPI
+from problem.views import TestCaseUploadAPIView, TestCaseDownloadAPIView, ProblemTagAdminAPIView, ProblemAdminAPIView, OpenAPIProblemAPI
 from submission.views import (SubmissionAPIView, SubmissionAdminAPIView, ContestSubmissionAPIView,
                               SubmissionShareAPIView, SubmissionRejudgeAdminAPIView, OpenAPISubmitCodeAPI)
 from judge_dispatcher.views import AdminJudgeServerAPIView
@@ -76,6 +76,7 @@ urlpatterns = [
     url(r'^api/admin/contest_problem/public/', MakeContestProblemPublicAPIView.as_view(),
         name="make_contest_problem_public"),
     url(r'^api/admin/test_case_upload/$', TestCaseUploadAPIView.as_view(), name="test_case_upload_api"),
+    url(r'^api/admin/test_case_download/$', TestCaseDownloadAPIView.as_view(), name="test_case_download_api"),
     url(r'^api/admin/tag/$', ProblemTagAdminAPIView.as_view(), name="problem_tag_admin_api"),
     url(r'^api/admin/join_group_request/$', JoinGroupRequestAdminAPIView.as_view(),
         name="join_group_request_admin_api"),
@@ -146,6 +147,8 @@ urlpatterns = [
     url(r'^reset_password/t/(?P<token>\w+)/$', "account.views.reset_password_page", name="reset_password_page"),
     url(r'^api/two_factor_auth/$', TwoFactorAuthAPIView.as_view(), name="two_factor_auth_api"),
     url(r'^two_factor_auth/$', TemplateView.as_view(template_name="oj/account/two_factor_auth.html"), name="two_factor_auth_page"),
+    url(r'^rank/(?P<page>\d+)/$', "account.views.user_rank_page", name="user_rank_page"),
+    url(r'^rank/$', "account.views.user_rank_page", name="user_rank_page"),
 ]
 
 

@@ -24,9 +24,6 @@ elif ENV == "server":
 
 from .custom_settings import *
 
-import djcelery
-djcelery.setup_loader()
-
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 
@@ -54,7 +51,6 @@ INSTALLED_APPS = (
     'judge_dispatcher',
 
     'rest_framework',
-    'djcelery',
 )
 
 if DEBUG:
@@ -177,6 +173,11 @@ else:
         )
     }
 
+# for celery
+BROKER_URL = 'redis://%s:%s/%s' % (REDIS_QUEUE["host"], str(REDIS_QUEUE["port"]), str(REDIS_QUEUE["db"]))
+CELERY_ACCEPT_CONTENT = ["json"]
+CELERY_TASK_SERIALIZER = "json"
+
 DATABASE_ROUTERS = ['oj.db_router.DBRouter']
 
 TEST_CASE_DIR = os.path.join(BASE_DIR, 'test_case/')
@@ -188,3 +189,6 @@ TOKEN_BUCKET_DEFAULT_CAPACITY = 50
 
 # 单位:每分钟
 TOKEN_BUCKET_FILL_RATE = 2
+
+# 是否显示所有人的提交, False就只显示自己的
+SHOW_ALL_SUBMISSIONS_LIST = False

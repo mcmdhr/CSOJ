@@ -11,15 +11,15 @@ import os
 
 
 WEBSITE_INFO = {"website_name": u"四川师范大学 OnlineJudge",
-                "website_name_shortcut": u"四川师范大学 oj",
-                "website_footer": u"四川师范大学 ACM-ICPC",
+                "website_name_shortcut": u"cs oj",
+                "website_footer": u"四川师范大学计算机科学学院",
                 # url结尾没有/
-                "url": u"https://your-domain-or-ip.com"}
+                "url": u"http://your-domain-or-ip.com"}
 
 
-SMTP_CONFIG = {"smtp_server": "smtp.xxx.com",
-               "email": "noreply@xxx.com",
-               "password": os.environ.get("smtp_password", "111111"),
+SMTP_CONFIG = {"smtp_server": "smtp.domain.com",
+               "email": "noreply@domain.com",
+               "password": "your_password",
                "tls": False}
 
 # please set your own SECRET_KEY to a long random string

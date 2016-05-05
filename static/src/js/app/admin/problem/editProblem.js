@@ -1,5 +1,5 @@
 require(["jquery", "avalon", "editor", "uploader", "bsAlert",
-        "csrfToken", "tagEditor", "validator", "jqueryUI", "editorComponent", "testCaseUploader"],
+        "csrfToken", "tagEditor", "validator", "jqueryUI", "editorComponent", "testCaseUploader", "spj"],
     function ($, avalon, editor, uploader, bsAlert, csrfTokenHeader) {
 
         avalon.ready(function () {
@@ -15,8 +15,12 @@ require(["jquery", "avalon", "editor", "uploader", "bsAlert",
                             bsAlert("题目描述不能为空!");
                             return false;
                         }
-                        if (vm.timeLimit < 100 || vm.timeLimit > 5000) {
-                            bsAlert("保证时间限制是一个100-5000的合法整数");
+                        if (vm.timeLimit < 1 || vm.timeLimit > 10000) {
+                            bsAlert("保证时间限制是一个1-10000的整数");
+                            return false;
+                        }
+                        if (vm.memoryLimit < 16) {
+                            bsAlert("最低内存不能低于16M(注意:Java最低需要内存32M)");
                             return false;
                         }
                         if (vm.samples.length == 0) {
@@ -34,6 +38,11 @@ require(["jquery", "avalon", "editor", "uploader", "bsAlert",
                             bsAlert("请至少添加一个标签，这将有利于用户发现你的题目!");
                             return false;
                         }
+                        var spjVM = avalon.vmodels.spjConfig;
+                        if (spjVM.spj && !spjVM.spjCode){
+                            bsAlert("请填写Special Judge的代码");
+                            return false;
+                        }
                         var ajaxData = {
                             id: avalon.vmodels.admin.problemId,
                             title: vm.title,
@@ -48,8 +57,13 @@ require(["jquery", "avalon", "editor", "uploader", "bsAlert",
                             tags: tags,
                             input_description: vm.inputDescription,
                             output_description: vm.outputDescription,
-                            difficulty: vm.difficulty
+                            difficulty: vm.difficulty,
+                            spj: spjVM.spj
                         };
+                        if (spjVM.spj) {
+                            ajaxData.spj_language = spjVM.spjLanguage;
+                            ajaxData.spj_code = spjVM.spjCode;
+                        }
 
                         for (var i = 0; i < vm.samples.$model.length; i++) {
                             ajaxData.samples.push({
@@ -82,7 +96,7 @@ require(["jquery", "avalon", "editor", "uploader", "bsAlert",
             if (avalon.vmodels.editProblem) {
                 var vm = avalon.vmodels.editProblem;
             }
-            else
+            else {
                 var vm = avalon.define({
                     $id: "editProblem",
                     title: "",
@@ -128,6 +142,7 @@ require(["jquery", "avalon", "editor", "uploader", "bsAlert",
                         avalon.vmodels.admin.template_url = "template/problem/problem_list.html";
                     }
                 });
+            }
 
             $.ajax({
                 url: "/api/admin/problem/?problem_id=" + avalon.vmodels.admin.problemId,
@@ -157,6 +172,12 @@ require(["jquery", "avalon", "editor", "uploader", "bsAlert",
                         vm.inputDescription = problem.input_description;
                         vm.outputDescription = problem.output_description;
                         avalon.vmodels.testCaseUploader.setTestCase(problem.test_case_id);
+                        var spjVM = avalon.vmodels.spjConfig;
+                        spjVM.spj = problem.spj;
+                        // spjLanguage可能是null
+                        spjVM.spjLanguage = problem.spj_language=="2"?"2":"1";
+                        spjVM.spjCode = problem.spj_code;
+
                         vm.source = problem.source;
                         var problemTags = problem.tags;
                         $.ajax({

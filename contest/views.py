@@ -8,8 +8,9 @@
 # Description :
 #=============================================================================
 import json
+import os
 import datetime
-import redis
+import hashlib
 
 from django.shortcuts import render
 from django.db import IntegrityError
@@ -184,6 +185,11 @@ class ContestAdminAPIView(APIView):
 
 
 class ContestProblemAdminAPIView(APIView):
+    def _spj_version(self, code):
+        if code is None:
+            return None
+        return hashlib.md5(code.encode("utf-8")).hexdigest()
+
     def post(self, request):
         """
         比赛题目发布json api接口
@@ -210,6 +216,10 @@ class ContestProblemAdminAPIView(APIView):
                                                             samples=json.dumps(data["samples"]),
                                                             time_limit=data["time_limit"],
                                                             memory_limit=data["memory_limit"],
+                                                            spj=data["spj"],
+                                                            spj_language=data["spj_language"],
+                                                            spj_code=data["spj_code"],
+                                                            spj_version=self._spj_version(data["spj_code"]),
                                                             created_by=request.user,
                                                             hint=data["hint"],
                                                             contest=contest,
@@ -233,6 +243,7 @@ class ContestProblemAdminAPIView(APIView):
                 contest_problem = ContestProblem.objects.get(id=data["id"])
             except ContestProblem.DoesNotExist:
                 return error_response(u"该比赛题目不存在！")
+
             contest = Contest.objects.get(id=contest_problem.contest_id)
             if request.user.admin_type != SUPER_ADMIN and contest.created_by != request.user:
                 return error_response(u"比赛不存在")
@@ -243,6 +254,10 @@ class ContestProblemAdminAPIView(APIView):
             contest_problem.test_case_id = data["test_case_id"]
             contest_problem.time_limit = data["time_limit"]
             contest_problem.memory_limit = data["memory_limit"]
+            contest_problem.spj = data["spj"]
+            contest_problem.spj_language = data["spj_language"]
+            contest_problem.spj_code = data["spj_code"]
+            contest_problem.spj_version = self._spj_version(data["spj_code"])
             contest_problem.samples = json.dumps(data["samples"])
             contest_problem.hint = data["hint"]
             contest_problem.visible = data["visible"]
@@ -292,12 +307,12 @@ class MakeContestProblemPublicAPIView(APIView):
         problem_id = request.data.get("problem_id", -1)
         try:
             problem = ContestProblem.objects.get(id=problem_id, is_public=False)
+            if problem.contest.status != CONTEST_ENDED:
+                return error_response(u"比赛还没有结束，不能公开题目")
             problem.is_public = True
             problem.save()
         except ContestProblem.DoesNotExist:
             return error_response(u"比赛不存在")
-        if problem.contest.status != CONTEST_ENDED:
-            return error_response(u"比赛还没有结束，不能公开题目")
         Problem.objects.create(title=problem.title, description=problem.description,
                                input_description=problem.input_description,
                                output_description=problem.output_description,
@@ -442,30 +457,41 @@ def contest_list_page(request, page=1):
                    "keyword": keyword, "join": join})
 
 
+def _get_rank(contest_id):
+    rank = ContestRank.objects.filter(contest_id=contest_id). \
+            select_related("user"). \
+            order_by("-total_ac_number", "total_time"). \
+            values("id", "user__id", "user__username", "user__real_name", "user__userprofile__student_id",
+                   "contest_id", "submission_info", "total_submission_number", "total_ac_number", "total_time")
+    return rank
+
+
 @check_user_contest_permission
 def contest_rank_page(request, contest_id):
     contest = Contest.objects.get(id=contest_id)
     contest_problems = ContestProblem.objects.filter(contest=contest, visible=True).order_by("sort_index")
 
-    r = get_cache_redis()
-    cache_key = str(contest_id) + "_rank_cache"
-    rank = r.get(cache_key)
-
-    if not rank:
-        rank = ContestRank.objects.filter(contest_id=contest_id). \
-            select_related("user"). \
-            order_by("-total_ac_number", "total_time"). \
-            values("id", "user__id", "user__username", "user__real_name", "contest_id", "submission_info",
-                   "total_submission_number", "total_ac_number", "total_time")
-        r.set(cache_key, json.dumps([dict(item) for item in rank]))
+    force_real_time_rank = False
+    if request.GET.get("force_real_time_rank") == "true" and (request.user.admin_type == SUPER_ADMIN or request.user == contest.created_by):
+        rank = _get_rank(contest_id)
+        force_real_time_rank = True
     else:
-        rank = json.loads(rank)
+        r = get_cache_redis()
+        cache_key = str(contest_id) + "_rank_cache"
+        rank = r.get(cache_key)
+
+        if not rank:
+            rank = _get_rank(contest_id)
+            r.set(cache_key, json.dumps([dict(item) for item in rank]))
+        else:
+            rank = json.loads(rank)
 
     return render(request, "oj/contest/contest_rank.html",
                   {"rank": rank, "contest": contest,
                    "contest_problems": contest_problems,
                    "auto_refresh": request.GET.get("auto_refresh", None) == "true",
-                   "show_real_name": request.GET.get("show_real_name", None) == "true", })
+                   "show_real_name": request.GET.get("show_real_name", None) == "true",
+                   "force_real_time_rank": force_real_time_rank})
 
 
 class ContestTimeAPIView(APIView):
@@ -497,7 +523,7 @@ def contest_problem_my_submissions_list_page(request, contest_id, contest_proble
         contest_problem = ContestProblem.objects.get(id=contest_problem_id, visible=True)
     except ContestProblem.DoesNotExist:
         return error_page(request, u"比赛问题不存在")
-    submissions = Submission.objects.filter(user_id=request.user.id, problem_id=contest_problem.id). \
+    submissions = Submission.objects.filter(user_id=request.user.id, problem_id=contest_problem.id, contest_id=contest_id). \
         order_by("-create_time"). \
         values("id", "result", "create_time", "accepted_answer_time", "language")
     return render(request, "oj/submission/problem_my_submissions_list.html",
@@ -544,7 +570,12 @@ def contest_problem_submissions_list_page(request, contest_id, page=1):
     if result:
         submissions = submissions.filter(result=int(result))
         filter = {"name": "result", "content": result}
+
     paginator = Paginator(submissions, 20)
+    try:
+        submissions = paginator.page(int(page))
+    except Exception:
+        return error_page(request, u"不存在的页码")
 
     # 为查询题目标题创建新字典
     title = {}
@@ -554,21 +585,17 @@ def contest_problem_submissions_list_page(request, contest_id, page=1):
     for item in submissions:
         item['title'] = title[item['problem_id']]
 
-    try:
-        current_page = paginator.page(int(page))
-    except Exception:
-        return error_page(request, u"不存在的页码")
     previous_page = next_page = None
     try:
-        previous_page = current_page.previous_page_number()
+        previous_page = submissions.previous_page_number()
     except Exception:
         pass
     try:
-        next_page = current_page.next_page_number()
+        next_page = submissions.next_page_number()
     except Exception:
         pass
 
-    for item in current_page:
+    for item in submissions:
         # 自己提交的 管理员和创建比赛的可以看到所有的提交链接
         if item["user_id"] == request.user.id or request.user.admin_type == SUPER_ADMIN or \
                         request.user == contest.created_by:
@@ -577,6 +604,6 @@ def contest_problem_submissions_list_page(request, contest_id, page=1):
             item["show_link"] = False
 
     return render(request, "oj/contest/submissions_list.html",
-                  {"submissions": current_page, "page": int(page),
+                  {"submissions": submissions, "page": int(page),
                    "previous_page": previous_page, "next_page": next_page, "start_id": int(page) * 20 - 20,
                    "contest": contest, "filter": filter, "user_id": user_id, "problem_id": problem_id})

@@ -1,8 +1,6 @@
 # This dockerfile uses the ubuntu image and it's the judger of csoj
 # Auther: Max
 FROM ubuntu:14.04
-RUN mkdir /var/install/
-WORKDIR /var/install/
 ENV DEBIAN_FRONTEND noninteractive
 RUN rm /etc/apt/sources.list
 COPY sources.list /etc/apt/
@@ -13,11 +11,12 @@ RUN echo debconf shared/accepted-oracle-license-v1-1 select true | sudo debconf-
 RUN echo debconf shared/accepted-oracle-license-v1-1 seen true | sudo debconf-set-selections
 RUN apt-get update
 RUN apt-get install -y oracle-java7-installer
-RUN git clone https://github.com/mcmdhr/Judger.git
-RUN cd Judger && python setup.py install
+RUN cd /tmp && git clone https://github.com/QingdaoU/Judger && cd Judger && python setup.py install
 RUN mkdir -p /var/judger/run/ && mkdir /var/judger/test_case/ && mkdir /var/judger/code/
 RUN chmod -R 777 /var/judger/run/
 COPY policy /var/judger/run/
+COPY supervisord.conf /etc
+RUN pip install supervisor
 WORKDIR /var/judger/code/judge/
 EXPOSE 8080
-CMD python server.py
+CMD bash /var/judger/code/dockerfiles/judger/run.sh
