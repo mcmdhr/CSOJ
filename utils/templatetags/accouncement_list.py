@@ -1,3 +1,5 @@
+# coding=utf-8
+
 #=============================================================================
 # Author       : MaxMao
 # Email        : 623742750@qq.com
@@ -5,7 +7,6 @@
 # Filename     : accouncement_list.py
 # Description :
 #=============================================================================
-# coding=utf-8
 from django import template
 
 from announcement.models import Announcement

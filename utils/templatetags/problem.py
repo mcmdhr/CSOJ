@@ -1,3 +1,5 @@
+# coding=utf-8
+
 #=============================================================================
 # Author       : MaxMao
 # Email        : 623742750@qq.com
@@ -5,7 +7,6 @@
 # Filename     : problem.py
 # Description :
 #=============================================================================
-# coding=utf-8
 
 
 def get_problem_accepted_radio(problem):

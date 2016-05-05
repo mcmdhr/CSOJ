@@ -1,3 +1,5 @@
+# coding=utf-8
+
 #=============================================================================
 # Author       : MaxMao
 # Email        : 623742750@qq.com
@@ -5,7 +7,6 @@
 # Filename     : tasks.py
 # Description :
 #=============================================================================
-# coding=utf-8
 from celery import shared_task
 from utils.mail import send_email
 

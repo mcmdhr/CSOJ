@@ -1,3 +1,5 @@
+# coding=utf-8
+
 #=============================================================================
 # Author       : MaxMao
 # Email        : 623742750@qq.com
@@ -5,7 +7,6 @@
 # Filename     : mail.py
 # Description :
 #=============================================================================
-# coding=utf-8
 from envelops import Envelop
 
 from django.conf import settings

@@ -1,3 +1,5 @@
+# coding=utf-8
+
 #=============================================================================
 # Author       : MaxMao
 # Email        : 623742750@qq.com
@@ -5,7 +7,7 @@
 # Filename     : middleware.py
 # Description :
 #=============================================================================
-# coding=utf-8
+
 import time
 import json
 import urllib

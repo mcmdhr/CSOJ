@@ -1,3 +1,5 @@
+# codeing=utf-8
+
 #=============================================================================
 # Author       : MaxMao
 # Email        : 623742750@qq.com
@@ -5,7 +7,6 @@
 # Filename     : cache.py
 # Description :
 #=============================================================================
-# codeing=utf-8
 import redis
 from django.conf import settings
 

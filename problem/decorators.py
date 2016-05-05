@@ -1,3 +1,5 @@
+# coding=utf-8
+
 #=============================================================================
 # Author       : MaxMao
 # Email        : 623742750@qq.com
@@ -5,7 +7,6 @@
 # Filename     : decorators.py
 # Description :
 #=============================================================================
-# coding=utf-8
 from functools import wraps
 
 from account.models import SUPER_ADMIN

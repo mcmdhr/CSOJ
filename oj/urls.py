@@ -1,3 +1,5 @@
+# coding=utf-8
+
 #=============================================================================
 # Author       : MaxMao
 # Email        : 623742750@qq.com
@@ -5,7 +7,6 @@
 # Filename     : urls.py
 # Description :
 #=============================================================================
-# coding=utf-8
 from django.conf import settings
 from django.conf.urls import include, url
 from django.views.generic import TemplateView

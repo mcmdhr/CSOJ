@@ -1,3 +1,5 @@
+# coding=utf-8
+
 #=============================================================================
 # Author       : MaxMao
 # Email        : 623742750@qq.com
@@ -5,7 +7,6 @@
 # Filename     : tests.py
 # Description :
 #=============================================================================
-# coding=utf-8
 from rest_framework.test import APIClient, APITestCase
 from rest_framework import serializers
 from rest_framework.decorators import api_view

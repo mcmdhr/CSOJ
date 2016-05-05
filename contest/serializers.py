@@ -1,3 +1,5 @@
+# coding=utf-8
+
 #=============================================================================
 # Author       : MaxMao
 # Email        : 623742750@qq.com
@@ -5,7 +7,6 @@
 # Filename     : serializers.py
 # Description :
 #=============================================================================
-# coding=utf-8
 import json
 from rest_framework import serializers
 from django.utils import timezone
