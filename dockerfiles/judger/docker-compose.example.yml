@@ -3,7 +3,8 @@ judger:
     volumes:
         - /home/CSOJ:/var/judger/code
         - /home/test_case:/var/judger/test_case
-        - /home/log:/judger/code/judge/log
+        - /home/log:/var/judger/code/judge/log
     environment:
-        - rpc_token=SicnuJudge
+        - rpc_token=SicnuOJ
+    ports:
         - "0.0.0.0:8085:8080"
