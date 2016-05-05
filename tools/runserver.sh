@@ -1,3 +1,5 @@
+#!/usr/bin/env bash
+
 #=============================================================================
 # Author       : MaxMao
 # Email        : 623742750@qq.com
@@ -5,5 +7,4 @@
 # Filename     : runserver.sh
 # Description :
 #=============================================================================
-#!/usr/bin/env bash
 python manage.py runserver

@@ -1,3 +1,5 @@
+#!/usr/bin/env bash
+
 #=============================================================================
 # Author       : MaxMao
 # Email        : 623742750@qq.com
@@ -5,7 +7,6 @@
 # Filename     : runtest.sh
 # Description :
 #=============================================================================
-#!/usr/bin/env bash
 coverage run --source='.' manage.py test
 test_result=$?
 if [ "$test_result" -eq 0 ];then
