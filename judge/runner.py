@@ -1,3 +1,4 @@
+# coding=utf-8
 #=============================================================================
 # Author       : MaxMao
 # Email        : 623742750@qq.com
@@ -5,7 +6,6 @@
 # Filename     : runner.py
 # Description :
 #=============================================================================
-# coding=utf-8
 import os
 import socket
 import shutil
