@@ -1,3 +1,5 @@
+#!/user/bin/env python
+
 #=============================================================================
 # Author       : MaxMao
 # Email        : 623742750@qq.com
@@ -5,7 +7,7 @@
 # Filename     : manage.py
 # Description :
 #=============================================================================
-#!/user/bin/env python
+
 import os
 import sys
 
