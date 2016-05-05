@@ -11,7 +11,7 @@ import os
 
 
 WEBSITE_INFO = {"website_name": u"四川师范大学 OnlineJudge",
-                "website_name_shortcut": u"example oj",
+                "website_name_shortcut": u"四川师范大学 oj",
                 "website_footer": u"四川师范大学 ACM-ICPC",
                 # url结尾没有/
                 "url": u"https://your-domain-or-ip.com"}
