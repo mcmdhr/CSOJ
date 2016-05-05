@@ -74,14 +74,21 @@ class UserProfile(models.Model):
     hduoj_username = models.CharField(max_length=30, blank=True, null=True)
     bestcoder_username = models.CharField(max_length=30, blank=True, null=True)
     codeforces_username = models.CharField(max_length=30, blank=True, null=True)
-    rank = models.IntegerField(default=65535)
-    accepted_number = models.IntegerField(default=0)
-    submissions_number = models.IntegerField(default=0)
+    accepted_problem_number = models.IntegerField(default=0)
+    submission_number = models.IntegerField(default=0)
     # JSON字典用来表示该用户的问题的解决状态 1为ac，2为正在进行
     problems_status = JSONField(default={})
     phone_number = models.CharField(max_length=15, blank=True, null=True)
     school = models.CharField(max_length=200, blank=True, null=True)
     student_id = models.CharField(max_length=15, blank=True, null=True)
+
+    def add_accepted_problem_number(self):
+        self.accepted_problem_number += 1
+        self.save(update_fields=["accepted_problem_number"])
+
+    def add_submission_number(self):
+        self.submission_number += 1
+        self.save(update_fields=["submission_number"])
 
     class Meta:
         db_table = "user_profile"
