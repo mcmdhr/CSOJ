@@ -1,5 +1,5 @@
 judger:
-    image: csoj/judger
+    image: judger
     volumes:
         - /home/CSOJ:/var/judger/code
         - /home/test_case:/var/judger/test_case
