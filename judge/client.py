@@ -43,7 +43,6 @@ class JudgeClient(object):
         self._max_cpu_time = max_cpu_time
 
         # 如果是Java, 就不在judger中限制内存分配了, 而是转移到Java运行参数中,
-        # 参见 https://github.com/QingdaoU/OnlineJudge/issues/23
         # 这里给出3倍的限制, 是为了防止出现OutOfMemory异常导致误判为Runtime Error,
         # 如果实际使用超过了3倍, 就只能得到Runtime Error的结果了
         # 而最后会比较Java实际使用的内存和1.5倍的设定内存的大小

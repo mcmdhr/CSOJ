@@ -31,12 +31,12 @@ require(["jquery", "bsAlert", "csrfToken", "validator"], function ($, bsAlert, c
             return false;
         }
     });
-    
+
     $("#school").blur(function () {
         var school = $("#school").val().trim(school).toLowerCase();
-        if (school == "青岛大学" || school == "qdu" || school == "青大") {
+        if (school == "四川师范大学" || school == "sicnu" || school == "川师") {
             $("#stu_id").show();
-            $("#school").val("青岛大学");
+            $("#school").val("四川师范大学");
         }
     });
     function refresh_captcha() {
